@@ -1,1 +1,33 @@
+<h1> All Products </h1>
 
+<ol>
+<% @products.each do |p| %>
+  <li>
+  <%= p.name %> </br>
+  <div id="product-<%=p.id%>" data-id="<%=p.id%>"><%= truncate p.description %> </div>
+  <button id="more_info" data-id="<%=p.id%>"> More Info </button>
+</li></br>
+<% end %>
+</ol>
+
+<script>
+  document.querySelectorAll('#more_info').forEach(function(e) {
+    e.addEventListener('click', showDetails)})
+
+  function showDetails(ev) {
+    const id = ev.target.dataset.id
+    fetch(`/products/${id}/description`)
+    .then(res => res.text())
+    .then(resText => {
+      document.querySelector(`#product-${id}`).innerHTML = `${resText}</br>`
+      })
+    fetch(`products/${id}/inventory`)
+    .then(res => res.text())
+    .then(resText => {
+      if(resText === "true") {
+        document.querySelector(`#product-${id}`).append("Available")
+      } else
+        document.querySelector(`#product-${id}`).append("Sold Out")
+    })
+  }
+</script>
